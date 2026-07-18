@@ -110,7 +110,7 @@ export async function fetchLatestDB() {
       else if (rangeName === TAB_MAP.songs) newDB.songs = mapRows(dataRows, ['maBH', 'tenBH', 'loiBH', 'phanLoai']);
       else if (rangeName === TAB_MAP.studentSongs) newDB.studentSongs = mapRows(dataRows, ['maHV', 'maBH']);
       else if (rangeName === TAB_MAP.attendance) newDB.attendance = mapRows(dataRows, ['maHV', 'ngay', 'ca']);
-      else if (rangeName === TAB_MAP.fees) newDB.fees = mapRows(dataRows, ['maHV', 'ngayThu', 'soTien', 'ghiChu']);
+      else if (rangeName === TAB_MAP.fees) newDB.fees = mapRows(dataRows, ['maHD', 'maHV', 'tenHV', 'soTien', 'ngayThu', 'nguoiThu', 'ghiChu']);
       else if (rangeName === TAB_MAP.settings) {
           const settingsObj: any = {};
           dataRows.forEach(r => { if(r[0]) settingsObj[r[0]] = r[1] || "" });
@@ -162,7 +162,7 @@ async function syncAllToSheets(db: Database) {
         { range: `${TAB_MAP.classes}!A2:D`, values: db.classes.map(c => [c.maLop || "", c.tenLop || "", c.lichHoc || "", c.maGV || ""]) },
         { range: `${TAB_MAP.songs}!A2:D`, values: db.songs.map(s => [s.maBH || "", s.tenBH || "", s.loiBH || "", s.phanLoai || ""]) },
         { range: `${TAB_MAP.attendance}!A2:C`, values: db.attendance.map(a => [a.maHV || "", a.ngay || "", a.ca || ""]) },
-        { range: `${TAB_MAP.fees}!A2:D`, values: db.fees.map(f => [f.maHV || "", f.ngayThu || "", f.soTien || "", f.ghiChu || ""]) },
+        { range: `${TAB_MAP.fees}!A2:G`, values: db.fees.map(f => [f.maHD || "", f.maHV || "", f.tenHV || "", f.soTien || "", f.ngayThu || "", f.nguoiThu || "", f.ghiChu || ""]) },
         { range: `${TAB_MAP.studentSongs}!A2:B`, values: db.studentSongs.map(s => [s.maHV || "", s.maBH || ""]) },
         { range: `${TAB_MAP.bookings}!A2:G`, values: db.bookings.map(b => [b.maBooking || "", b.maHV || "", b.tenHV || "", b.maLop || "", b.tenLop || "", b.caHoc || "", b.ngay || ""]) },
         { range: `${TAB_MAP.teachers}!A2:E`, values: db.teachers.map(t => [t.maGV || "", t.tenGV || "", t.email || "", t.luongCoBan || "", t.sdt || ""]) },
