@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Guitar,
   User,
@@ -1708,7 +1708,6 @@ export default function App() {
                   {adminTab === "fees" && "THU HỌC PHÍ & VIETQR"}
                   {adminTab === "telegram" && "GỬI THÔNG BÁO"}
                   {adminTab === "settings" && "CẤU HÌNH HỆ THỐNG"}
-                  {adminTab === "sheets" && "ĐỒNG BỘ SHEETS"}
                 </span>
               </div>
             </div>
@@ -1876,20 +1875,6 @@ export default function App() {
                   >
                     <Compass size={14} className="shrink-0" />
                     CÀI ĐẶT
-                  </button>
-                  <button
-                    onClick={() => {
-                      setAdminTab("sheets");
-                      playCyberSound(950, "sine", 0.08);
-                    }}
-                    className={`shrink-0 lg:shrink whitespace-nowrap lg:whitespace-normal text-left px-3.5 py-2 lg:px-4 lg:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 lg:gap-3 ${
-                      adminTab === "sheets"
-                        ? "bg-gradient-to-r from-[#1c85a6] to-[#f05a28] text-white shadow-md shadow-[#1c85a6]/30 font-black"
-                        : "text-slate-400 hover:bg-slate-900 hover:text-slate-200"
-                    }`}
-                  >
-                    <FileSpreadsheet size={14} className="shrink-0" />
-                    ĐỒNG BỘ SHEETS
                   </button>
                 </div>
               </div>
@@ -3567,21 +3552,6 @@ export default function App() {
                   >
                     <Compass size={16} className="shrink-0" />
                     <span>CÀI ĐẶT CHUNG</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setAdminTab("sheets");
-                      setIsAdminMoreOpen(false);
-                      playCyberSound(950, "sine", 0.08);
-                    }}
-                    className={`flex items-center gap-3 p-3 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
-                      adminTab === "sheets"
-                        ? "bg-gradient-to-r from-[#1c85a6] to-[#f05a28] text-white shadow-md"
-                        : "bg-slate-900 text-slate-300 border border-slate-800 hover:text-white"
-                    }`}
-                  >
-                    <FileSpreadsheet size={16} className="shrink-0" />
-                    <span>ĐỒNG BỘ SHEETS</span>
                   </button>
                 </div>
 
