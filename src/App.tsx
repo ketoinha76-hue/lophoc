@@ -1114,7 +1114,7 @@ export default function App() {
                 <h2 className="font-display font-black text-2xl bg-gradient-to-r from-[#1c85a6] via-[#f9a01b] to-[#f05a28] bg-clip-text text-transparent filter drop-shadow-[0_0_8px_rgba(28,133,166,0.3)]">
                   CHÀO MỪNG TRỞ LẠI
                 </h2>
-                <p className="text-slate-400 text-xs mt-1.5 font-mono">// ACCESS CONSOLE: CHỌN PHÂN HỆ ĐĂNG NHẬP</p>
+
               </div>
 
               {/* Vibrant Tab Selector */}
@@ -1243,18 +1243,7 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="flex justify-between items-center px-1">
-                      <span className="text-[10px] text-slate-500 font-mono">MÃ TRUY CẬP MẪU:</span>
-                      <button
-                        onClick={() => {
-                          setAdminPassword("Vietnam@123");
-                          playCyberSound(400, "sine", 0.08);
-                        }}
-                        className="text-[10px] text-[#f9a01b] hover:text-[#f05a28] hover:underline cursor-pointer bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-all font-mono"
-                      >
-                        Vietnam@123
-                      </button>
-                    </div>
+
 
                     <button
                       onClick={() => {
