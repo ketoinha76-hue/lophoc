@@ -666,7 +666,7 @@ async function startServer() {
     }
 
     const settings = db.settings;
-    const vietqrUrl = `https://img.vietqr.io/image/${settings.bankName}-${settings.bankAcc}-compact.png?amount=${soTien}&addInfo=HOC%20PHI%20${maHV}%20${tenHV.replace(/\s+/g, '%20')}&accountName=${encodeURIComponent(settings.bankOwner)}`;
+    const vietqrUrl = `https://vietqr.app/img?bank=${settings.bankName}&acc=${settings.bankAcc}&template=qronly&showinfo=true&holder=${encodeURIComponent(settings.bankOwner)}&amount=${soTien}&addInfo=HOC%20PHI%20${maHV}%20${encodeURIComponent(tenHV)}`;
 
     const htmlInvoice = `
       <div style="width: 210mm; height: 148mm; padding: 35px; box-sizing: border-box; background: #fff; color: #333; border: 3px double #1a365d; font-family: 'Arial', sans-serif; position: relative;">
