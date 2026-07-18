@@ -1,0 +1,6 @@
+{
+  "name": "Lớp Nhạc Huỳnh Long",
+  "description": "Hệ thống quản lý điểm danh, học phí, sổ tay đệm hát và góc luyện tập thông minh cho học viên và giáo viên.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

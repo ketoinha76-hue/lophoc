@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Force select option tags to have high-contrast dark text and white background on all browsers and OS */
+select option {
+  color: #18181b !important; /* zinc-900 */
+  background-color: #ffffff !important; /* white */
+}
+
+select {
+  color: #18181b !important; /* zinc-900 default for selects on light backgrounds */
+}
