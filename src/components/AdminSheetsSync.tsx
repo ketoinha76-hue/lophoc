@@ -200,16 +200,16 @@ export default function AdminSheetsSync({ onRefresh }: { onRefresh: () => void }
       const teleKeywords = ["telegram", "tele", "telegram id", "chat id"];
       mappings.telegramId = findBestHeaderIndex(firstRow, teleKeywords);
 
-      const feeKeywords = ["học phí", "hocphi", "hoc phi", "tiền", "tiền học", "fee", "amount", "price"];
+      const feeKeywords = ["học phí", "học phí cơ bản", "hocphi", "hoc phi", "tiền", "tiền học", "fee", "amount", "price"];
       mappings.hocPhi = findBestHeaderIndex(firstRow, feeKeywords);
     } else if (target === "classes") {
       const nameKeywords = ["tên lớp", "lớp", "ten lop", "class name", "class"];
       mappings.tenLop = findBestHeaderIndex(firstRow, nameKeywords);
 
-      const schedKeywords = ["lịch học", "lich hoc", "schedule", "thời gian", "lich"];
+      const schedKeywords = ["lịch học cố định", "lịch học", "lich hoc", "schedule", "thời gian", "lich"];
       mappings.lichHoc = findBestHeaderIndex(firstRow, schedKeywords);
 
-      const teacherKeywords = ["giáo viên", "giảng viên", "gv", "giao vien", "teacher", "instructor"];
+      const teacherKeywords = ["mã gv", "giáo viên", "giảng viên", "gv", "giao vien", "teacher", "instructor"];
       mappings.maGV = findBestHeaderIndex(firstRow, teacherKeywords);
     } else if (target === "songs") {
       const nameKeywords = ["tên bài hát", "bài hát", "tên bài", "ten bai hat", "song title", "song", "title"];
@@ -323,7 +323,7 @@ export default function AdminSheetsSync({ onRefresh }: { onRefresh: () => void }
       };
 
       // 1. Sync Students
-      const studentTabName = findSheetTitleByKeywordLocal(["học viên", "hoc vien", "student"], "students", currentSheets);
+      const studentTabName = findSheetTitleByKeywordLocal(["danhsachhocvien", "học viên", "hoc vien", "student"], "students", currentSheets);
       try {
         const rows = await fetchSheetValuesForSync(accessToken, cleanId, studentTabName);
         const records = detectAndMapRows(rows, "students");
@@ -347,7 +347,7 @@ export default function AdminSheetsSync({ onRefresh }: { onRefresh: () => void }
       }
 
       // 2. Sync Classes
-      const classTabName = findSheetTitleByKeywordLocal(["lớp", "lop", "class"], "classes", currentSheets);
+      const classTabName = findSheetTitleByKeywordLocal(["danhsachlophoc", "lớp", "lop", "class"], "classes", currentSheets);
       try {
         const rows = await fetchSheetValuesForSync(accessToken, cleanId, classTabName);
         const records = detectAndMapRows(rows, "classes");
@@ -371,7 +371,7 @@ export default function AdminSheetsSync({ onRefresh }: { onRefresh: () => void }
       }
 
       // 3. Sync Songs
-      const songTabName = findSheetTitleByKeywordLocal(["bài hát", "bai hat", "song"], "songs", currentSheets);
+      const songTabName = findSheetTitleByKeywordLocal(["khobaihat", "bài hát", "bai hat", "song"], "songs", currentSheets);
       try {
         const rows = await fetchSheetValuesForSync(accessToken, cleanId, songTabName);
         const records = detectAndMapRows(rows, "songs");
