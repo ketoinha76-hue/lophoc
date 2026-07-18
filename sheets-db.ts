@@ -170,20 +170,24 @@ async function syncAllToSheets(db: Database) {
         { range: `${TAB_MAP.settings}!A2:B`, values: Object.entries(db.settings || {}).map(([k, v]) => [k, String(v) || ""]) }
     ];
     
-    // Clear and update
-    try {
-        for (const update of updates) {
-            // Very naive full overwrite approach. Real apps should append/update rows using google sheets API properly.
-            await sheetsClient.spreadsheets.values.update({
-                spreadsheetId,
-                range: update.range,
-                valueInputOption: 'USER_ENTERED',
-                requestBody: { values: update.values }
-            });
-            // Need a sleep to avoid rate limits 60/min
-            await new Promise(r => setTimeout(r, 500));
+    for (const update of updates) {
+        try {
+            if (update.values.length === 0) {
+                await sheetsClient.spreadsheets.values.clear({
+                    spreadsheetId,
+                    range: update.range
+                });
+            } else {
+                await sheetsClient.spreadsheets.values.update({
+                    spreadsheetId,
+                    range: update.range,
+                    valueInputOption: 'USER_ENTERED',
+                    requestBody: { values: update.values }
+                });
+            }
+        } catch (e) {
+            console.error(`Error writing to ${update.range}:`, e);
         }
-    } catch (e) {
-        console.error("Error writing to sheets:", e);
+        await new Promise(r => setTimeout(r, 500));
     }
 }
