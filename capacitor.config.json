@@ -1,0 +1,21 @@
+{
+  "appId": "com.huynhlong.lopnhac",
+  "appName": "Lớp Nhạc Huỳnh Long",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": ["lophoc.onrender.com"]
+  },
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#0f172a"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#0f172a",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    }
+  }
+}

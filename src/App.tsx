@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import {
   Guitar,
   User,
@@ -92,6 +92,8 @@ const playCyberSound = (freq: number, type: OscillatorType = "sine", duration: n
     // Graceful fallback if autoplay or browser block occurs
   }
 };
+
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string) || '';
 
 export default function App() {
   const [role, setRole] = useState<"welcome" | "student" | "admin">("welcome");
@@ -481,19 +483,19 @@ export default function App() {
 
   const fetchGlobalData = async () => {
     try {
-      const stRes = await fetch("/api/students");
+      const stRes = await fetch(`${API_BASE}/api/students`);
       if (stRes.ok) setStudents(await stRes.json());
 
-      const clRes = await fetch("/api/classes");
+      const clRes = await fetch(`${API_BASE}/api/classes`);
       if (clRes.ok) setClasses(await clRes.json());
 
-      const sgRes = await fetch("/api/songs");
+      const sgRes = await fetch(`${API_BASE}/api/songs`);
       if (sgRes.ok) setSongs(await sgRes.json());
 
-      const tcRes = await fetch("/api/teachers");
+      const tcRes = await fetch(`${API_BASE}/api/teachers`);
       if (tcRes.ok) setTeachers(await tcRes.json());
 
-      const seRes = await fetch("/api/settings");
+      const seRes = await fetch(`${API_BASE}/api/settings`);
       if (seRes.ok) {
         const s = await seRes.json();
         setSettings(s);
@@ -514,10 +516,10 @@ export default function App() {
   // Student specific data pulling
   const fetchStudentData = async (maHV: string) => {
     try {
-      const songsRes = await fetch(`/api/students/${maHV}/songs`);
+      const songsRes = await fetch(`${API_BASE}/api/students/${maHV}/songs`);
       if (songsRes.ok) setStudentSongs(await songsRes.json());
 
-      const detailsRes = await fetch(`/api/students/${maHV}/details`);
+      const detailsRes = await fetch(`${API_BASE}/api/students/${maHV}/details`);
       if (detailsRes.ok) {
         const d = await detailsRes.json();
         setStudentAttendanceCount(d.attendanceCount);
@@ -536,7 +538,7 @@ export default function App() {
     }
     setIsStudentLoading(true);
     try {
-      const res = await fetch("/api/students/login", {
+      const res = await fetch(`${API_BASE}/api/students/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sdt: studentPhone })
@@ -585,7 +587,7 @@ export default function App() {
   // Admin Tuition Receipts
   const fetchFeeHistory = async () => {
     try {
-      const res = await fetch("/api/fees");
+      const res = await fetch(`${API_BASE}/api/fees`);
       if (res.ok) setFeeReceiptHistory(await res.json());
     } catch (e) {
       console.error(e);
@@ -620,7 +622,7 @@ export default function App() {
     if (feeNote) finalNote += ` - Ghi chú: ${feeNote}`;
 
     try {
-      const res = await fetch("/api/fees", {
+      const res = await fetch(`${API_BASE}/api/fees`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -693,7 +695,7 @@ export default function App() {
   const handleDeleteSong = async (maBH: string) => {
     if (!confirm("Bạn muốn xóa bài hát này ra khỏi kho?")) return;
     try {
-      const res = await fetch(`/api/songs/${maBH}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE}/api/songs/${maBH}`, { method: "DELETE" });
       if (res.ok) {
         alert("Đã xóa bài hát khỏi kho!");
         fetchGlobalData();
@@ -718,7 +720,7 @@ export default function App() {
       return;
     }
     try {
-      const res = await fetch("/api/reports/bulk-telegram", {
+      const res = await fetch(`${API_BASE}/api/reports/bulk-telegram`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -740,7 +742,7 @@ export default function App() {
   // Save Settings panel
   const handleSaveSettings = async () => {
     try {
-      const res = await fetch("/api/settings", {
+      const res = await fetch(`${API_BASE}/api/settings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -766,7 +768,7 @@ export default function App() {
 
   const handleActiveAutoScheduler = async () => {
     try {
-      const res = await fetch("/api/reports/scheduler", { method: "POST" });
+      const res = await fetch(`${API_BASE}/api/reports/scheduler`, { method: "POST" });
       if (res.ok) {
         const data = await res.json();
         alert(data.message);
@@ -779,7 +781,7 @@ export default function App() {
   // Admin Payroll calculators
   const fetchPayrollReport = async () => {
     try {
-      const res = await fetch("/api/reports/payroll");
+      const res = await fetch(`${API_BASE}/api/reports/payroll`);
       if (res.ok) setPayrollReport(await res.json());
     } catch (e) {
       console.error(e);
@@ -832,7 +834,7 @@ export default function App() {
   const handleDeleteTeacher = async (maGV: string) => {
     if (!confirm("Bạn muốn xóa hồ sơ giáo viên này?")) return;
     try {
-      const res = await fetch(`/api/teachers/${maGV}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE}/api/teachers/${maGV}`, { method: "DELETE" });
       if (res.ok) {
         alert("Đã xóa giáo viên thành công!");
         fetchGlobalData();
@@ -875,7 +877,7 @@ export default function App() {
     if (!confirmSend) return;
 
     try {
-      const res = await fetch("/api/teachers/zalo-salary", {
+      const res = await fetch(`${API_BASE}/api/teachers/zalo-salary`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
