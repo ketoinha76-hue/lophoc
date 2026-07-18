@@ -24,10 +24,8 @@ jobs:
 
       - name: Build web app for Capacitor (pointing to Render)
         run: |
-          cp .env.capacitor .env.local
-          npm run build
-        env:
-          VITE_API_BASE_URL: https://lophoc.onrender.com
+          echo "VITE_API_BASE_URL=https://lophoc.onrender.com" > .env.local
+          npm run build:app
 
       - name: Install Capacitor
         run: |
