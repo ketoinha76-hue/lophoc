@@ -6,117 +6,41 @@ import { createServer as createViteServer } from "vite";
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const DB_FILE = path.join(process.cwd(), "data", "db.json");
 
-// Ensure data directory exists
+import { Database, getDB, writeDB as writeSheetsDB, initSheetsDB } from "./sheets-db";
+
+// Ensure data directory exists for legacy fallback if needed
 if (!fs.existsSync(path.dirname(DB_FILE))) {
   fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 }
 
-interface Database {
-  classes: any[];
-  students: any[];
-  songs: any[];
-  studentSongs: any[];
-  attendance: any[];
-  fees: any[];
-  settings: {
-    botToken: string;
-    adminChatId: string;
-    bankName: string;
-    bankAcc: string;
-    bankOwner: string;
-    googleAccessToken?: string;
-    zaloOaId?: string;
-    zaloAccessToken?: string;
-    zaloActive?: boolean;
-  };
-  bookings: any[];
-  teachers: any[];
-  practices: any[];
-  telegramLogs: any[];
-  zaloLogs: any[];
-}
-
-const defaultDB: Database = {
-  classes: [
-    { maLop: 'LH100', tenLop: 'Lớp Guitar Cơ Bản 1', lichHoc: 'Thứ 2 (17:00 - 18:30) & Thứ 4 (17:00 - 18:30)', maGV: 'GV100' },
-    { maLop: 'LH101', tenLop: 'Lớp Guitar Nâng Cao 1', lichHoc: 'Thứ 7 (19:00 - 20:30)', maGV: 'GV101' },
-    { maLop: 'LH102', tenLop: 'Lớp Đệm Hát Cấp Tốc', lichHoc: 'Tự do (Linh động thời gian)', maGV: 'GV100' }
-  ],
-  students: [
-    { maHV: 'HV100', tenHV: 'Nguyễn Văn Anh', sdt: '0912345678', lop: 'Lớp Guitar Cơ Bản 1', caHoc: 'Thứ 2 (17:00 - 18:30) & Thứ 4 (17:00 - 18:30)', telegramId: '123456789', hocPhi: '500000', streak: 5, lastPracticeDate: '15/07/2026' },
-    { maHV: 'HV101', tenHV: 'Trần Thị Bình', sdt: '0987654321', lop: 'Lớp Guitar Nâng Cao 1', caHoc: 'Thứ 7 (19:00 - 20:30)', telegramId: '987654321', hocPhi: '600000', streak: 0, lastPracticeDate: '' },
-    { maHV: 'HV102', tenHV: 'Lê Hoàng Châu', sdt: '0905556666', lop: 'Lớp Guitar Cơ Bản 1', caHoc: 'Thứ 2 (17:00 - 18:30) & Thứ 4 (17:00 - 18:30)', telegramId: '', hocPhi: '500000', streak: 2, lastPracticeDate: '16/07/2026' }
-  ],
-  songs: [
-    { maBH: 'BH100', tenBH: 'Tuổi Hồng Thơ Ngây', loiBH: '<p>[C] Tuổi hồng thơ ngây dưới [Em] mái trường</p><p>[Am] Tuổi hồng thơ ngây [F] có thương nhau [G] không</p>', phanLoai: 'Hợp Âm' },
-    { maBH: 'BH101', tenBH: 'Diễm Xưa', loiBH: '<p>[Am] Mưa vẫn mưa bay trên tầng tháp [Dm] cổ</p><p>Dài tay em [Am] mấy thuở mắt xanh [E7] xao</p>', phanLoai: 'Hợp Âm' },
-    { maBH: 'BH102', tenBH: 'Nhỏ Ơi', loiBH: '<p>Lần [C] đầu ta gặp [Am] nhỏ, trong [Dm] nắng chiều bay [G] bay</p><p>Ngập [C] ngừng ta hỏi [Am] nhỏ, nhỏ [Dm] bảo nhỏ không [C] yêu</p>', phanLoai: 'Hợp Âm' },
-    { maBH: 'BH103', tenBH: 'Cảm Âm Bèo Dạt Mây Trôi', loiBH: '<p>Sol La Đô2 Rê2 Rê2 Mi2 Rê2 Đô2 Rê2 Sol La Đô2... (Nốt nhạc melody)</p>', phanLoai: 'Cảm Âm' }
-  ],
-  studentSongs: [
-    { maHV: 'HV100', maBH: 'BH100' },
-    { maHV: 'HV100', maBH: 'BH102' },
-    { maHV: 'HV101', maBH: 'BH101' },
-    { maHV: 'HV102', maBH: 'BH100' }
-  ],
-  attendance: [
-    { maHV: 'HV100', ngay: '10/07/2026', ca: 'Lớp Guitar Cơ Bản 1' },
-    { maHV: 'HV100', ngay: '14/07/2026', ca: 'Lớp Guitar Cơ Bản 1' },
-    { maHV: 'HV100', ngay: '16/07/2026', ca: 'Lớp Guitar Cơ Bản 1' },
-    { maHV: 'HV101', ngay: '08/07/2026', ca: 'Lớp Guitar Nâng Cao 1' },
-    { maHV: 'HV101', ngay: '15/07/2026', ca: 'Lớp Guitar Nâng Cao 1' },
-    { maHV: 'HV102', ngay: '14/07/2026', ca: 'Lớp Guitar Cơ Bản 1' }
-  ],
-  fees: [
-    { maHD: 'HD1721000000001', maHV: 'HV100', tenHV: 'Nguyễn Văn Anh', soTien: 500000, ngayThu: '01/07/2026 18:00', nguoiThu: 'Huỳnh Bá Long', ghiChu: 'Học phí cơ bản: 500.000đ' },
-    { maHD: 'HD1721000000002', maHV: 'HV101', tenHV: 'Trần Thị Bình', soTien: 600000, ngayThu: '02/07/2026 19:30', nguoiThu: 'Huỳnh Bá Long', ghiChu: 'Học phí cơ bản: 600.000đ' }
-  ],
-  settings: {
-    botToken: '123456789:AAH_SAMPLE_BOT_TOKEN_FOR_PREVIEW',
-    adminChatId: '999999999',
-    bankName: 'MBBank',
-    bankAcc: '0071001234567',
-    bankOwner: 'HUYNH BA LONG',
-    zaloOaId: '112233445566',
-    zaloAccessToken: 'ZALO_OA_ACCESS_TOKEN_PREVIEW_SECRET_123',
-    zaloActive: true
-  },
-  bookings: [
-    { maBooking: 'BK100', maHV: 'HV102', tenHV: 'Lê Hoàng Châu', maLop: 'LH102', tenLop: 'Lớp Đệm Hát Cấp Tốc', caHoc: 'Thứ 3 (19:00 - 20:30)', ngay: '21/07/2026' }
-  ],
-  teachers: [
-    { maGV: 'GV100', tenGV: 'Huỳnh Bá Long', email: 'longhb@gmail.com', luongCoBan: 150000, sdt: '0912345678' },
-    { maGV: 'GV101', tenGV: 'Lê Thanh Sơn', email: 'sonlt@gmail.com', luongCoBan: 120000, sdt: '0987654321' }
-  ],
-  practices: [
-    { maPractice: 'PR100', maHV: 'HV100', tenHV: 'Nguyễn Văn Anh', tenBH: 'Tuổi Hồng Thơ Ngây', duration: 15, ngay: '15/07/2026', videoUrl: '' }
-  ],
-  telegramLogs: [],
-  zaloLogs: []
-};
-
 function readDB(): Database {
-  try {
-    if (fs.existsSync(DB_FILE)) {
-      const data = fs.readFileSync(DB_FILE, "utf-8");
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error("Failed to read database, resetting with default values", error);
-  }
-  writeDB(defaultDB);
-  return defaultDB;
+  return getDB();
 }
 
 function writeDB(db: Database) {
+  // Sync to sheets
+  writeSheetsDB(db).catch(console.error);
+  // Optionally backup locally
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), "utf-8");
   } catch (error) {
-    console.error("Failed to write to database", error);
+    console.error("Failed to backup to local db", error);
   }
 }
 
 async function startServer() {
+  require("dotenv").config();
+  const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID || "16YsyE3TB_LURl4pr09qPprzfuCH78lSZ5YmoULkcF-A";
+  const CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL;
+  const PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY;
+  
+  if (SPREADSHEET_ID && CLIENT_EMAIL && PRIVATE_KEY) {
+    initSheetsDB(SPREADSHEET_ID, CLIENT_EMAIL, PRIVATE_KEY);
+    console.log("✅ Initialized Google Sheets Live DB");
+  } else {
+    console.warn("⚠️ Missing Google Sheets credentials. App will crash or return empty data if no local fallback.");
+  }
+
   const app = express();
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
